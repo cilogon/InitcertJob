@@ -134,7 +134,7 @@ class InitcertJob extends CoJobBackend {
     $mappingFile = fopen($mappingFilePath, "r");
 
     while(!feof($mappingFile)) {
-      $line = fgets($mappingFile);
+      $line = trim(fgets($mappingFile));
       if($line) {
         $fields = explode("|", $line);
         $coPersonDnMap[$fields[0]] = $fields[2];
@@ -164,7 +164,8 @@ class InitcertJob extends CoJobBackend {
           continue;
         }
 
-        $dn = $coPersonDnMap[$coPersonId];
+        $dnGridFormat = $coPersonDnMap[$coPersonId];
+        $dn = substr(implode(',', array_reverse(explode('/', $dnGridFormat))), 0, -1);
 
         $CoPerson->Certificate->clear();
         $CoPerson->CoJobHistoryRecord->clear();
@@ -190,7 +191,7 @@ class InitcertJob extends CoJobBackend {
           $newJobHistoryRecord['CoJobHistoryRecord']['comment'] = "Unable to add DN $dn";
           $newJobHistoryRecord['CoJobHistoryRecord']['status'] = JobStatusEnum::Failed;
         } else {
-          $newJobHistoryRecord['CoJobHistoryRecord']['comment'] = "Added DN $dn";
+          $newJobHistoryRecord['CoJobHistoryRecord']['comment'] = "Added DN " . $dn;
           $newJobHistoryRecord['CoJobHistoryRecord']['status'] = JobStatusEnum::Complete;
           $CoPerson->HistoryRecord->save($newHistoryRecord);
         }
