@@ -220,4 +220,16 @@ class InitcertJob extends CoJobBackend {
 
     return $params;
   }
+
+  /**
+   * @since  COmanage Registry v4.0.0
+   * @return Array Array of supported parameters.
+   */
+  public function getAvailableJobs() {
+    $availableJobs = array();
+
+    $availableJobs['Initcert'] = "Add CILogon Certificate Authenticator objects";
+
+    return $availableJobs;
+  }
 }
